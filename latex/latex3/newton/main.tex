@@ -1,0 +1,75 @@
+\documentclass[12pt]{article}
+
+\usepackage{expl3}
+\usepackage{xparse}
+\usepackage{amsmath}
+
+\ExplSyntaxOn
+\cs_set_eq:NN \fpeval \fp_eval:n
+
+\fp_new:N \x_fp
+\fp_new:N \res_fp
+
+\fp_new:N \eps_fp
+\fp_gset:Nn \eps_fp { 10 ^ -14 }
+\int_new:N \iter_int
+\newcommand{\iterate} [3] {
+
+    \cs_set_eq:NN \res_fun #2
+    \cs_set_eq:NN \Dres_fun #3
+
+    \fp_gset:Nn \x_fp {#1}
+    \fp_gset:Nn \res_fp { \res_fun{\x_fp} }
+
+    \fp_do_while:nNnn { abs(\res_fp) } > { \eps_fp } {
+
+        Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\eps_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
+        \par
+
+        \fp_gset:Nn \x_fp { \x_fp - \res_fun{\x_fp}/\Dres_fun{\x_fp} }
+        \fp_gset:Nn \res_fp { \res_fun{\x_fp} }
+        \int_incr:N \iter_int
+
+    }
+    Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\eps_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
+    \par
+}
+
+\newcommand{\result}{
+    \fp_to_decimal:n {\x_fp}
+}
+
+\ExplSyntaxOff
+
+\parindent=0pt
+\parskip=0.5em
+
+\begin{document}
+Solve $x = \cos(x)$ using Newton's method.
+
+We iterate using the equation
+$$
+x \leftarrow x - \frac{r(x)}{r'(x)},
+$$
+where 
+$$
+r(x) = x - \cos(x) \quad \text{and} \quad r'(x) = 1 + \sin(x).
+$$
+
+\newcommand{\guess}{0.0}
+The results of the iteration with an initial guess of \guess{}:
+
+\newcommand{\fun} [1] {%
+    \fpeval{ #1 - cos(#1) }%
+}
+\newcommand{\Dfun} [1] {%
+    \fpeval{ 1 + sin(#1) }%
+}
+\iterate{\guess}{\fun}{\Dfun}
+
+
+And the approximate answer is \result{}.
+
+
+
+\end{document}
