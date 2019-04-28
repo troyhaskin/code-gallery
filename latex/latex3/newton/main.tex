@@ -18,12 +18,13 @@
     \cs_set_eq:NN \res_fun #2
     \cs_set_eq:NN \Dres_fun #3
 
+    \int_gset:Nn \iter_int {0}
     \fp_gset:Nn \x_fp {#1}
     \fp_gset:Nn \res_fp { \res_fun{\x_fp} }
 
     \fp_do_while:nNnn { abs(\res_fp) } > { \eps_fp } {
 
-        Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\eps_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
+        Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\x_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
         \par
 
         \fp_gset:Nn \x_fp { \x_fp - \res_fun{\x_fp}/\Dres_fun{\x_fp} }
@@ -31,7 +32,7 @@
         \int_incr:N \iter_int
 
     }
-    Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\eps_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
+    Iteration~\int_to_arabic:n{ \iter_int }:~$x = \fp_to_decimal:n {\x_fp}$,~$r(x) = \fp_to_decimal:n {\res_fp}$
     \par
 }
 
@@ -57,8 +58,7 @@ r(x) = x - \cos(x) \quad \text{and} \quad r'(x) = 1 + \sin(x).
 $$
 
 \newcommand{\guess}{0.0}
-The results of the iteration with an initial guess of \guess{}:
-
+The results of the iteration with an initial guess of \guess{}:\par
 \newcommand{\fun} [1] {%
     \fpeval{ #1 - cos(#1) }%
 }
@@ -66,10 +66,19 @@ The results of the iteration with an initial guess of \guess{}:
     \fpeval{ 1 + sin(#1) }%
 }
 \iterate{\guess}{\fun}{\Dfun}
-
-
 And the approximate answer is \result{}.
 
+
+\renewcommand{\guess}{3.5}
+The results of the iteration with an initial guess of \guess{}:\par
+\renewcommand{\fun} [1] {%
+    \fpeval{ #1 - cos(#1) }%
+}
+\renewcommand{\Dfun} [1] {%
+    \fpeval{ 1 + sin(#1) }%
+}
+\iterate{\guess}{\fun}{\Dfun}
+And the approximate answer is \result{}.
 
 
 \end{document}
